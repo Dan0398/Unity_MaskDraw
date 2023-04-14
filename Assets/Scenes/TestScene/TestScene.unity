@@ -144,7 +144,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7d7e29bb62fb85042b00641137c5a961, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.065
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7d7e29bb62fb85042b00641137c5a961, type: 3}
       propertyPath: m_LocalRotation.w
@@ -203,11 +203,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -3298200436328543068, guid: 7d7e29bb62fb85042b00641137c5a961, type: 3}
---- !u!23 &531887246 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 7d7e29bb62fb85042b00641137c5a961, type: 3}
-  m_PrefabInstance: {fileID: 531887243}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,7 +232,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 3
+  m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -397,17 +392,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 049011e7234a6b5478cac3215c68c095, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UVShader: {fileID: 4800000, guid: f1bbedccda0963d47ab97bfec00e3e4e, type: 3}
-  RenderTextureShader: {fileID: 4800000, guid: 16aa06e532ea441439b471d57872d8f5, type: 3}
-  DrawMasks:
-  - {fileID: 2800000, guid: c3f3dbdb0b67fa646a3a4b27cc6ec11c, type: 3}
-  SelectedMaskNumber: 0
-  Size: 0.46
+  UVShader: {fileID: 0}
+  RenderTextureShader: {fileID: 0}
+  TargetMesh: {fileID: 0}
+  Mask: {fileID: 0}
+  ProjectionUseLookDirection: 0
+  ProjectionIsOrtho: 0
+  Size: 0.3
   FOV: 30
-  Length: 1
+  MaxLength: 1
+  DrawMask: {fileID: 0}
   DrawColor:
     serializedVersion: 2
     rgba: 4278190335
   DrawSensitivity: 1
-  TargetMesh: {fileID: 531887246}
-  TextureForDraw: {fileID: 8600000, guid: 8eeff7fa9c33a6b4c8d4e007dcf0e9c4, type: 2}
+  UVProjectorMat: {fileID: 0}
+  MaterialForDraw: {fileID: 0}

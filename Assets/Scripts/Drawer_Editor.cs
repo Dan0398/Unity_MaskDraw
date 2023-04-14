@@ -5,18 +5,19 @@ using UnityEditor;
 [CustomEditor(typeof(Drawer))]
 [ExecuteAlways]
 [System.Serializable]
-public class DrawerEditor : Editor
+public partial class DrawerEditor : Editor
 {
-    Drawer Target;
+    Drawer DrawerComponent;
     [SerializeField] public bool RequireToDrawInEditMode;
     [SerializeField] public bool IsLeftMousePressed;
+    Transform SceneViewTransform;
     Tool OldSelectedTool;
     int OldHotControl;
     
-    
     public override void OnInspectorGUI()
     {
-        base.OnInspectorGUI();
+        DrawInspector();
+        if (!ReadyToDraw) return;
         var Required = EditorGUILayout.Toggle("Draw in edit mode", RequireToDrawInEditMode);
         if (Required != RequireToDrawInEditMode)
         {
@@ -38,9 +39,9 @@ public class DrawerEditor : Editor
     
     void OnSceneGUI()
     {
-        if (Target == null) Target = (Drawer)target;
+        if (DrawerComponent == null) DrawerComponent = (Drawer)target;
         if (!RequireToDrawInEditMode) return;
-        if (!Target.AllowToDraw()) return;
+        if (!DrawerComponent.AllowToDraw()) return;
         var Ev = Event.current;
         if (Ev != null)
         {
@@ -63,10 +64,14 @@ public class DrawerEditor : Editor
             if (Physics.Raycast(ScreenRay,out RaycastHit hit, 100))
             {
                 var Mask = hit.collider.GetComponent<Renderer>();
-                if (Mask != null && Mask == Target.TargetMesh)
+                if (Mask != null && Mask == DrawerComponent.TargetMesh)
                 {
                     EditorGUIUtility.hotControl = -1;
-                    Target.ProcessDraw(hit, ScreenRay.direction, SceneView.currentDrawingSceneView.camera.transform.up);
+                    if (SceneViewTransform == null)
+                    {
+                        SceneViewTransform = SceneView.currentDrawingSceneView.camera.transform;
+                    }
+                    DrawerComponent.ProcessDraw(hit, ScreenRay.direction, SceneViewTransform.up);
                     Repaint();
                 }
             }

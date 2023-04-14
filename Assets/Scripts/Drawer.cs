@@ -4,26 +4,26 @@ using UnityEngine.Rendering;
 public class Drawer : MonoBehaviour
 {
     const float ProjectionOutstandingHeight = 0.2f;
-    [System.Serializable] enum ProjectionType { Orthographic, Perspective}
     
-    [SerializeField] Shader UVShader, RenderTextureShader;
-    [Space(), SerializeField] public Renderer TargetMesh;
-    [SerializeField] Texture2D DrawMask;
+    public Shader UVShader, RenderTextureShader;
+    public Renderer TargetMesh;
+    public CustomRenderTexture Mask;
+    
     
     [Header("Projection Params")]
     public bool ProjectionUseLookDirection;
-    [SerializeField] ProjectionType Type;
-    [SerializeField, Range(0.01f, 10)] float Size = 1;
+    public bool ProjectionIsOrtho;
+    [SerializeField, Range(0.01f, 10)] float Size = 0.3f;
     [SerializeField, Range(10, 90)] int FOV = 30;
-    [SerializeField, Range(0.01f, 10)] float Length = 1;
+    [SerializeField, Range(0.01f, 10)] float MaxLength = 1;
     
     [Header("Draw Parameters")]
-    [SerializeField] Color32 DrawColor = Color.red;
+    [SerializeField] Texture2D DrawMask;
+    public Color32 DrawColor = Color.red;
     [SerializeField, Range(0.0f, 1.0f)] float DrawSensitivity = 1;
     
-    [SerializeField] CustomRenderTexture TextureForDraw;
     Camera PlaymodeCamera;
-    Material UVProjectorMat, MaterialForDraw;
+    [SerializeField] Material UVProjectorMat, MaterialForDraw;
     RenderTexture UVMaskProjector;
     Matrix4x4 ProjectionMatrix, ViewMatrix;
     CommandBuffer command;
@@ -37,22 +37,22 @@ public class Drawer : MonoBehaviour
         };
         UVProjectorMat.SetFloat("Size", 512);
         MaterialForDraw = new Material(RenderTextureShader);
-        TextureForDraw.material = MaterialForDraw;
-        TextureForDraw.Initialize();
+        Mask.material = MaterialForDraw;
+        Mask.Initialize();
         command = new CommandBuffer();
         OnValidate();
     }
     
     void OnValidate()
     {
-        if(Type == ProjectionType.Perspective)
+        if(!ProjectionIsOrtho)
         {
             ProjectionMatrix = Matrix4x4.Perspective(FOV, 1, 0, 100);
         }
         else 
         {
             var HalfSize = Size / 2f;
-            ProjectionMatrix = Matrix4x4.Ortho(HalfSize,HalfSize,HalfSize,HalfSize,0,100);
+            ProjectionMatrix = Matrix4x4.Ortho(HalfSize,-HalfSize,HalfSize,-HalfSize,0,100);
         }
     }
     
@@ -117,7 +117,7 @@ public class Drawer : MonoBehaviour
             command.SetRenderTarget(UVMaskProjector);
             UVProjectorMat.SetVector("DrawDirection", ViewMatrix.MultiplyVector(Vector3.forward));
             UVProjectorMat.SetVector("DrawWorldPos", ViewMatrix.MultiplyPoint(Vector3.zero));
-            UVProjectorMat.SetFloat("MaxDistance", Length);
+            UVProjectorMat.SetFloat("MaxDistance", MaxLength);
             command.SetViewMatrix(ViewMatrix.inverse);
             command.SetProjectionMatrix(ProjectionMatrix);
             command.DrawRenderer(TargetMesh, UVProjectorMat, 0);
@@ -132,7 +132,7 @@ public class Drawer : MonoBehaviour
             MaterialForDraw.SetTexture("UVMap", UVMaskProjector);
             MaterialForDraw.SetColor("DrawColor", DrawColor);
             MaterialForDraw.SetFloat("DrawSensitivity", DrawSensitivity);
-            TextureForDraw.Update();
+            Mask.Update();
         }
     }
     
@@ -140,14 +140,27 @@ public class Drawer : MonoBehaviour
     {
         Gizmos.color = Color.red - Color.black * 0.6f;
         Gizmos.DrawSphere(ViewMatrix.MultiplyPoint(Vector3.zero), 0.02f);
-        if(Type == ProjectionType.Perspective)
+        if(ProjectionIsOrtho)
         {
-            var StartPoint = ViewMatrix.MultiplyPoint(Vector3.zero);
-            var Angle = new Vector2(Mathf.Sin(FOV * Mathf.Deg2Rad), Mathf.Cos(FOV * Mathf.Deg2Rad))/2f;
-            var LowLeft = ViewMatrix.MultiplyPoint(new Vector3(-Angle.x,  Angle.x, ProjectionOutstandingHeight));
-            var LowRight = ViewMatrix.MultiplyPoint(new Vector3(Angle.x,  Angle.x, ProjectionOutstandingHeight));
-            var UpLeft = ViewMatrix.MultiplyPoint(new Vector3( -Angle.x, -Angle.x, ProjectionOutstandingHeight));
-            var UpRight = ViewMatrix.MultiplyPoint(new Vector3( Angle.x, -Angle.x, ProjectionOutstandingHeight));
+            var Direction = ViewMatrix.MultiplyVector(Vector3.forward * MaxLength) * ProjectionOutstandingHeight;
+            var HalfSize = Size * 0.5f;
+            var StartPoint = ViewMatrix.MultiplyPoint(-Vector2.one * HalfSize);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawRay(StartPoint, Direction);
+            StartPoint = ViewMatrix.MultiplyPoint(Vector2.one * HalfSize);
+            Gizmos.DrawRay(StartPoint, Direction);
+            StartPoint = ViewMatrix.MultiplyPoint(new Vector2(-HalfSize, HalfSize));
+            Gizmos.DrawRay(StartPoint, Direction);
+            StartPoint = ViewMatrix.MultiplyPoint(new Vector2(HalfSize, -HalfSize));
+            Gizmos.DrawRay(StartPoint, Direction);
+        }
+        else 
+        {
+            var Angle = new Vector2(Mathf.Sin(FOV * Mathf.Deg2Rad)/2f, Mathf.Cos(FOV * Mathf.Deg2Rad) * ProjectionOutstandingHeight);
+            var LowLeft = ViewMatrix.MultiplyPoint(new Vector3(-Angle.x,  Angle.x, Angle.y));
+            var LowRight = ViewMatrix.MultiplyPoint(new Vector3(Angle.x,  Angle.x, Angle.y));
+            var UpLeft = ViewMatrix.MultiplyPoint(new Vector3( -Angle.x, -Angle.x, Angle.y));
+            var UpRight = ViewMatrix.MultiplyPoint(new Vector3( Angle.x, -Angle.x, Angle.y));
             Gizmos.color = Color.yellow;
             Gizmos.DrawLine(LowRight, UpRight);
             Gizmos.DrawLine(LowLeft, LowRight);
