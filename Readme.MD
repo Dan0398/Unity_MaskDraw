@@ -1,4 +1,4 @@
-# Unity3D Mask Drawer
+# Unity3D Mask Draw
 This component allows to draw RGB mask directly inside scene view
 ## Preview
 ![image](/ReadmeImages/Preview.gif "Usage of component inside editor")
@@ -13,20 +13,20 @@ This component allows to draw RGB mask directly inside scene view
 
 - Support skinned mesh renderer.
 - "Read/Write enabled" in import settings doesn't required
-- Custom brush masks.
+- Custom brush mask.
 - Orthographic and perspective projection types.
 - Easy export result as .PNG.
 - Up to 4 images for draw (for black, red, green, blue; alpha channel didn't use)
 ## How to use
 This component works as usual MonoBehaviour script.
-1. Assign [Drawer.cs](/Assets/Scripts/Drawer.cs) to any object on scene.
+1. Assign [Draw.cs](/Assets/Scripts/Draw.cs) to any object on scene.
 2. Assign shaders to component. [This](/Assets/Shaders/UVRenderer.shader) to "UV Projection Shader", [this](/Assets/Shaders/RenderTexture%20Shader.shader) to "RenderTexture Shader"
 3. Assign target mesh from hierarchy.
 4. Create a mask. In project folder create **Custom Render Texture**. 
 - Configure size as you wish (power-of-two size of side is preferred).
 - Initialization Source => Texture and Color; Color => Set black color.
 - Be sure to check **Double buffered** switch turned on.
-5. Assign mask into Drawer component on scene.
+5. Assign mask into Draw component on scene.
 6. Create material. You need to create a shader that support masks. I prepared [this one](/Assets/Shaders/WorldCoordSimple.shader). It's simple world-coord shader. You can choose this from path "Drawable/World Coord Simple".
 7. Assign created material on target mesh.
 8. Assign draw mask in property field. You can use [prepared](/Assets/Masks/Circle.jpg) image. If you want to create you own, don't forget to set **Wrap Mode** to **Clamp** in import settings of your asset.

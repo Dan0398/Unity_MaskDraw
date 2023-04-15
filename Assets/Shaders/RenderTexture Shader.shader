@@ -1,4 +1,4 @@
-﻿Shader "Drawable/Utils/CustomRenderTexture Drawer"
+﻿Shader "Drawable/Utils/CustomRenderTexture Draw"
 {
     Properties
     {

@@ -203,6 +203,11 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -3298200436328543068, guid: 7d7e29bb62fb85042b00641137c5a961, type: 3}
+--- !u!23 &531887246 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 7d7e29bb62fb85042b00641137c5a961, type: 3}
+  m_PrefabInstance: {fileID: 531887243}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -389,19 +394,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 963194225}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 049011e7234a6b5478cac3215c68c095, type: 3}
+  m_Script: {fileID: 11500000, guid: ce6b7b8d3fa6c584ea3158644bc14f00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UVShader: {fileID: 0}
-  RenderTextureShader: {fileID: 0}
-  TargetMesh: {fileID: 0}
-  Mask: {fileID: 0}
+  UVShader: {fileID: 4800000, guid: f1bbedccda0963d47ab97bfec00e3e4e, type: 3}
+  RenderTextureShader: {fileID: 4800000, guid: 16aa06e532ea441439b471d57872d8f5, type: 3}
+  TargetMesh: {fileID: 531887246}
+  Mask: {fileID: 8600000, guid: 8eeff7fa9c33a6b4c8d4e007dcf0e9c4, type: 2}
   ProjectionUseLookDirection: 0
   ProjectionIsOrtho: 0
   Size: 0.3
   FOV: 30
   MaxLength: 1
-  DrawMask: {fileID: 0}
+  DrawMask: {fileID: 2800000, guid: c3f3dbdb0b67fa646a3a4b27cc6ec11c, type: 3}
   DrawColor:
     serializedVersion: 2
     rgba: 4278190335

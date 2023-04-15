@@ -2,14 +2,14 @@
 using UnityEngine;
 using UnityEditor;
  
-public partial class DrawerEditor : Editor
+public partial class DrawEditor : Editor
 {
     bool UnwrappedSetupWindow = true;
     bool ReadyToDraw, ShadersReady, MeshReady, MaskReady;
     
     void DrawInspector()
     {
-        if (DrawerComponent == null) DrawerComponent = (Drawer)target;
+        if (DrawComponent == null) DrawComponent = (Draw)target;
         ProcessStatus();
         DrawPreparingPart();
         DrawProjectionPart();
@@ -19,9 +19,9 @@ public partial class DrawerEditor : Editor
     
     void ProcessStatus()
     {
-        ShadersReady = DrawerComponent.UVShader != null && DrawerComponent.RenderTextureShader != null;
-        MeshReady = DrawerComponent.TargetMesh != null;
-        MaskReady = DrawerComponent.Mask != null;
+        ShadersReady = DrawComponent.UVShader != null && DrawComponent.RenderTextureShader != null;
+        MeshReady = DrawComponent.TargetMesh != null;
+        MaskReady = DrawComponent.Mask != null;
         ReadyToDraw = ShadersReady && MeshReady && MaskReady;
     }
     
@@ -32,13 +32,12 @@ public partial class DrawerEditor : Editor
             EditorGUILayout.LabelField("Component not ready");
             if (!ShadersReady) EditorGUILayout.LabelField("Setup shaders");
             else if (!MeshReady) EditorGUILayout.LabelField("Setup mesh");
-            else if (!MeshReady) EditorGUILayout.LabelField("Setup mesh");
             else if (!MaskReady) EditorGUILayout.LabelField("Setup mask");
         }
         if (ReadyToDraw)
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            UnwrappedSetupWindow = EditorGUILayout.BeginFoldoutHeaderGroup(UnwrappedSetupWindow, "Require To work");
+            UnwrappedSetupWindow = EditorGUILayout.BeginFoldoutHeaderGroup(UnwrappedSetupWindow, "Required To work");
         }
         if (!ReadyToDraw || UnwrappedSetupWindow)
         {
@@ -58,13 +57,13 @@ public partial class DrawerEditor : Editor
         
         void DrawShaderFields()
         {
-            DrawerComponent.UVShader = (Shader)EditorGUILayout.ObjectField("UV Projection Shader",DrawerComponent.UVShader, typeof(Shader), true);
-            DrawerComponent.RenderTextureShader = (Shader)EditorGUILayout.ObjectField("RenderTexture Shader", DrawerComponent.RenderTextureShader, typeof(Shader), true);
+            DrawComponent.UVShader = (Shader)EditorGUILayout.ObjectField("UV Projection Shader",DrawComponent.UVShader, typeof(Shader), true);
+            DrawComponent.RenderTextureShader = (Shader)EditorGUILayout.ObjectField("RenderTexture Shader", DrawComponent.RenderTextureShader, typeof(Shader), true);
         }
         
         void DrawMeshField()
         {
-            DrawerComponent.TargetMesh = (Renderer)EditorGUILayout.ObjectField("Mesh for draw",DrawerComponent.TargetMesh, typeof(Renderer), true);
+            DrawComponent.TargetMesh = (Renderer)EditorGUILayout.ObjectField("Mesh for draw",DrawComponent.TargetMesh, typeof(Renderer), true);
         }
         
         void DrawMaskField()
@@ -78,10 +77,9 @@ public partial class DrawerEditor : Editor
             if (GUILayout.Button("Export as .png"))
             {
                 var Path = EditorUtility.SaveFilePanelInProject("Save mask as ready image", "Mask", "png", "Save");
-                var Size = DrawerComponent.Mask.width;
+                var Size = DrawComponent.Mask.width;
                 Texture2D tex = new Texture2D(Size, Size, TextureFormat.RGB24, false);
-                // ReadPixels looks at the active RenderTexture.
-                RenderTexture.active = DrawerComponent.Mask;
+                RenderTexture.active = DrawComponent.Mask;
                 tex.ReadPixels(new Rect(0, 0, Size, Size), 0, 0);
                 tex.Apply(false);
                 System.IO.File.WriteAllBytes(Path,tex.EncodeToPNG());
@@ -104,31 +102,31 @@ public partial class DrawerEditor : Editor
         
         void DrawOutStandingDirection()
         {
-            string Info = DrawerComponent.ProjectionUseLookDirection? "Look direction" : "Raycast normal";
+            string Info = DrawComponent.ProjectionUseLookDirection? "Look direction" : "Raycast normal";
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("Outstanding direction");
             if (GUILayout.Button(Info))
             {
-                DrawerComponent.ProjectionUseLookDirection = !DrawerComponent.ProjectionUseLookDirection;
+                DrawComponent.ProjectionUseLookDirection = !DrawComponent.ProjectionUseLookDirection;
             }
             EditorGUILayout.EndHorizontal();
         }
         
         void DrawProjectionType()
         {
-            string Info = DrawerComponent.ProjectionIsOrtho? "Orthographic" : "Perspective";
+            string Info = DrawComponent.ProjectionIsOrtho? "Orthographic" : "Perspective";
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("Projection Type");
             if (GUILayout.Button(Info))
             {
-                DrawerComponent.ProjectionIsOrtho = !DrawerComponent.ProjectionIsOrtho;
+                DrawComponent.ProjectionIsOrtho = !DrawComponent.ProjectionIsOrtho;
             }
             EditorGUILayout.EndHorizontal();
         }
         
         void DrawProjectionParams()
         {
-            if (DrawerComponent.ProjectionIsOrtho)
+            if (DrawComponent.ProjectionIsOrtho)
             {
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("Size"));
             }
@@ -150,10 +148,10 @@ public partial class DrawerEditor : Editor
         void DrawFastSwitchColorButtons()
         {
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Red"))    DrawerComponent.DrawColor = Color.red; 
-            if (GUILayout.Button("Green"))  DrawerComponent.DrawColor = Color.green; 
-            if (GUILayout.Button("Blue"))   DrawerComponent.DrawColor = Color.blue; 
-            if (GUILayout.Button("Black"))  DrawerComponent.DrawColor = Color.black; 
+            if (GUILayout.Button("Red"))    DrawComponent.DrawColor = Color.red; 
+            if (GUILayout.Button("Green"))  DrawComponent.DrawColor = Color.green; 
+            if (GUILayout.Button("Blue"))   DrawComponent.DrawColor = Color.blue; 
+            if (GUILayout.Button("Black"))  DrawComponent.DrawColor = Color.black; 
             EditorGUILayout.EndHorizontal();
         }
     }

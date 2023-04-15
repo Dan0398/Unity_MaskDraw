@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class Drawer : MonoBehaviour
+public class Draw : MonoBehaviour
 {
     const float ProjectionOutstandingHeight = 0.2f;
     

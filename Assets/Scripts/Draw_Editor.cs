@@ -2,12 +2,12 @@
 using UnityEngine;
 using UnityEditor;
  
-[CustomEditor(typeof(Drawer))]
+[CustomEditor(typeof(Draw))]
 [ExecuteAlways]
 [System.Serializable]
-public partial class DrawerEditor : Editor
+public partial class DrawEditor : Editor
 {
-    Drawer DrawerComponent;
+    Draw DrawComponent;
     [SerializeField] public bool RequireToDrawInEditMode;
     [SerializeField] public bool IsLeftMousePressed;
     Transform SceneViewTransform;
@@ -39,9 +39,9 @@ public partial class DrawerEditor : Editor
     
     void OnSceneGUI()
     {
-        if (DrawerComponent == null) DrawerComponent = (Drawer)target;
+        if (DrawComponent == null) DrawComponent = (Draw)target;
         if (!RequireToDrawInEditMode) return;
-        if (!DrawerComponent.AllowToDraw()) return;
+        if (!DrawComponent.AllowToDraw()) return;
         var Ev = Event.current;
         if (Ev != null)
         {
@@ -64,14 +64,14 @@ public partial class DrawerEditor : Editor
             if (Physics.Raycast(ScreenRay,out RaycastHit hit, 100))
             {
                 var Mask = hit.collider.GetComponent<Renderer>();
-                if (Mask != null && Mask == DrawerComponent.TargetMesh)
+                if (Mask != null && Mask == DrawComponent.TargetMesh)
                 {
                     EditorGUIUtility.hotControl = -1;
                     if (SceneViewTransform == null)
                     {
                         SceneViewTransform = SceneView.currentDrawingSceneView.camera.transform;
                     }
-                    DrawerComponent.ProcessDraw(hit, ScreenRay.direction, SceneViewTransform.up);
+                    DrawComponent.ProcessDraw(hit, ScreenRay.direction, SceneViewTransform.up);
                     Repaint();
                 }
             }
